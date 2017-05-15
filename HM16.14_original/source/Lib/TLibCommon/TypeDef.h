@@ -51,6 +51,10 @@
 // ====================================================================================================================
 // Debugging
 // ====================================================================================================================
+#define WH                                                960//The size of one face in CMP.
+#define HF_tongji                                         1//When enabled tongji the border 
+
+
 
 #define DEBUG_STRING                                      0 ///< When enabled, prints out final decision debug info at encoder and decoder
 #define DEBUG_ENCODER_SEARCH_BINS                         0 ///< When enabled, prints out each bin as it is coded during encoder search
@@ -195,6 +199,13 @@ typedef       double              Double;
 typedef       float               Float;
 
 
+static long double total_count = 0;
+
+static long double left_count = 0;
+static long double  above_count = 0;
+static long double leftabove_count = 0;
+static long double leftbellow_count = 0;
+static long double Aboveright_count = 0;
 // ====================================================================================================================
 // 64-bit integer type
 // ====================================================================================================================
