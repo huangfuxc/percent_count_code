@@ -2200,20 +2200,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
 
 		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		  {
-			  if (getSlice()->isInterB())
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
-					  above_count++;
-
-			  }
-			  else
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
-				  {
-					  above_count++;
-
-				  }
-			  }
+			  above_count++;
 			  cout << "above_count   " << above_count << endl;
 		  }
 #endif
@@ -2252,20 +2239,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
 
 		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		  {
-			  if (getSlice()->isInterB())
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
-					  left_count++;
-
-			  }
-			  else
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
-				  {
-					  left_count++;
-
-				  }
-			  }
+			  left_count++;
 			  cout << "left_count   " << left_count << endl;
 		  }
 #endif
@@ -2418,22 +2392,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
 
 		if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		{
-			if (getSlice()->isInterB())
-			{
-				if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
-					Aboveright_count++;
 
-	}
-			else
-			{
-				if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
-				{
-					Aboveright_count++;
-
-				}
-			}
+			Aboveright_count++;
 			cout << "Aboveright_count   " << Aboveright_count << endl;
-  }
+			
+         }
 #endif
       return;
     }
@@ -2478,20 +2441,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
 
 		if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		{
-			if (getSlice()->isInterB())
-			{
-				if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
-					leftbellow_count++;
-
-			}
-			else
-			{
-				if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
-				{
-					leftbellow_count++;
-
-				}
-			}
+			leftbellow_count++;		
 			cout << "leftbellow_count   " << leftbellow_count << endl;
 		}
 #endif
@@ -2541,20 +2491,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
 
 		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		  {
-			  if (getSlice()->isInterB())
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
-					  leftabove_count++;
-
-			  }
-			  else
-			  {
-				  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
-				  {
-					  leftabove_count++;
-
-				  }
-			  }
+			  leftabove_count++;
 			  cout << "leftabove_count   " << leftabove_count << endl;
 		  }
 #endif
