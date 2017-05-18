@@ -2174,85 +2174,280 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
   deriveLeftBottomIdxGeneral( uiAbsPartIdx, uiPUIdx, uiPartIdxLB );
 #if HF_tongji
   // above
-  UInt uiAbovePartIdx = 0;
-  const TComDataCU *pcCUAbove = getPUAbove( uiAbovePartIdx, uiPartIdxRT );
-  Bool isAvailableB1 = pcCUAbove &&
-	  pcCUAbove->isDiffMER(xP+nPSW-1, yP-1, xP, yP) &&
-	  !( uiPUIdx == 1 && (cCurPS == SIZE_2NxN || cCurPS == SIZE_2NxnU || cCurPS == SIZE_2NxnD) ) &&
-	  pcCUAbove->isInter( uiAbovePartIdx );
-
-
-  if ( isAvailableB1  )
-  {
-	  abCandIsInter[iCount] = true;
-	  // get Inter Dir
-	  puhInterDirNeighbours[iCount] = pcCUAbove->getInterDir( uiAbovePartIdx );
-	  // get Mv from Left
-	  TComDataCU::getMvField( pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount<<1] );
-	  if ( getSlice()->isInterB() )
-	  {
-		  TComDataCU::getMvField( pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount<<1)+1] );
-	  }
-	  if ( mrgCandIdx == iCount )
-	  {
-
-#if HF_tongji
-
-		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
-		  {
-			  above_count++;
-			  cout << "above_count   " << above_count << endl;
-		  }
-#endif
-		  return;
-	  }
-	  iCount ++;
-  }
-  // early termination
-  if (iCount == getSlice()->getMaxNumMergeCand())
-  {
-	  return;
-  }
-  //left
   UInt uiLeftPartIdx = 0;
   const TComDataCU *pcCULeft = getPULeft(uiLeftPartIdx, uiPartIdxLB);
+  UInt uiAbovePartIdx = 0;
+  const TComDataCU *pcCUAbove = getPUAbove(uiAbovePartIdx, uiPartIdxRT);
+  Bool isAvailableB1;
+  Bool isAvailableA1;
 
-  Bool isAvailableA1 = pcCULeft &&
-	  pcCULeft->isDiffMER(xP -1, yP+nPSH-1, xP, yP) &&
-	  !( uiPUIdx == 1 && (cCurPS == SIZE_Nx2N || cCurPS == SIZE_nLx2N || cCurPS == SIZE_nRx2N) ) &&
-	  pcCULeft->isInter( uiLeftPartIdx ) ;
-
-  if (isAvailableA1 && (!isAvailableB1 || !pcCUAbove->hasEqualMotion(uiAbovePartIdx, pcCULeft, uiLeftPartIdx)))
+  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
   {
-	  abCandIsInter[iCount] = true;
-	  // get Inter Dir
-	  puhInterDirNeighbours[iCount] = pcCULeft->getInterDir( uiLeftPartIdx );
-	  // get Mv from Left
-	  TComDataCU::getMvField( pcCULeft, uiLeftPartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount<<1] );
-	  if ( getSlice()->isInterB() )
-	  {
-		  TComDataCU::getMvField( pcCULeft, uiLeftPartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount<<1)+1] );
-	  }
-	  if ( mrgCandIdx == iCount )
-	  {
-#if HF_tongji
+	  
+	   isAvailableB1 = pcCUAbove &&
+		  pcCUAbove->isDiffMER(xP + nPSW - 1, yP - 1, xP, yP) &&
+		  !(uiPUIdx == 1 && (cCurPS == SIZE_2NxN || cCurPS == SIZE_2NxnU || cCurPS == SIZE_2NxnD)) &&
+		  pcCUAbove->isInter(uiAbovePartIdx);
 
-		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+
+	  if (isAvailableB1)
+	  {
+		  abCandIsInter[iCount] = true;
+		  // get Inter Dir
+		  puhInterDirNeighbours[iCount] = pcCUAbove->getInterDir(uiAbovePartIdx);
+		  // get Mv from Left
+		  TComDataCU::getMvField(pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount << 1]);
+		  if (getSlice()->isInterB())
 		  {
-			  left_count++;
-			  cout << "left_count   " << left_count << endl;
+			  TComDataCU::getMvField(pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount << 1) + 1]);
 		  }
+		  if (mrgCandIdx == iCount)
+		  {
+
+#if HF_tongji_
+
+			  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+			  {
+				  above_count++;
+				  cout << "above_count   " << above_count << endl;
+			  }
 #endif
+			  return;
+		  }
+		  iCount++;
+	  }
+	  // early termination
+	  if (iCount == getSlice()->getMaxNumMergeCand())
+	  {
 		  return;
 	  }
-	  iCount ++;
-  }
+	  //left
+//	  UInt uiLeftPartIdx = 0;
+	//  const TComDataCU *pcCULeft = getPULeft(uiLeftPartIdx, uiPartIdxLB);
 
-  // early termination
-  if (iCount == getSlice()->getMaxNumMergeCand())
-  {
-	  return;
+	   isAvailableA1 = pcCULeft &&
+		  pcCULeft->isDiffMER(xP - 1, yP + nPSH - 1, xP, yP) &&
+		  !(uiPUIdx == 1 && (cCurPS == SIZE_Nx2N || cCurPS == SIZE_nLx2N || cCurPS == SIZE_nRx2N)) &&
+		  pcCULeft->isInter(uiLeftPartIdx);
+
+	  if (isAvailableA1 && (!isAvailableB1 || !pcCUAbove->hasEqualMotion(uiAbovePartIdx, pcCULeft, uiLeftPartIdx)))
+	  {
+		  abCandIsInter[iCount] = true;
+		  // get Inter Dir
+		  puhInterDirNeighbours[iCount] = pcCULeft->getInterDir(uiLeftPartIdx);
+		  // get Mv from Left
+		  TComDataCU::getMvField(pcCULeft, uiLeftPartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount << 1]);
+		  if (getSlice()->isInterB())
+		  {
+			  TComDataCU::getMvField(pcCULeft, uiLeftPartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount << 1) + 1]);
+		  }
+		  if (mrgCandIdx == iCount)
+		  {
+#if HF_tongji_
+
+			  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+			  {
+				  left_count++;
+				  cout << "left_count   " << left_count << endl;
+			  }
+#endif
+			  return;
+		  }
+		  iCount++;
+	  }
+
+	  // early termination
+	  if (iCount == getSlice()->getMaxNumMergeCand())
+	  {
+		  return;
+	  }
   }
+  else
+  {
+
+	 
+
+	  isAvailableA1 = pcCULeft &&
+		  pcCULeft->isDiffMER(xP - 1, yP + nPSH - 1, xP, yP) &&
+		  !(uiPUIdx == 1 && (cCurPS == SIZE_Nx2N || cCurPS == SIZE_nLx2N || cCurPS == SIZE_nRx2N)) &&
+		  pcCULeft->isInter(uiLeftPartIdx);
+
+	  if (isAvailableA1)
+	  {
+		  abCandIsInter[iCount] = true;
+		  // get Inter Dir
+		  puhInterDirNeighbours[iCount] = pcCULeft->getInterDir(uiLeftPartIdx);
+		  // get Mv from Left
+		  TComDataCU::getMvField(pcCULeft, uiLeftPartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount << 1]);
+		  if (getSlice()->isInterB())
+		  {
+			  TComDataCU::getMvField(pcCULeft, uiLeftPartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount << 1) + 1]);
+		  }
+		  if (mrgCandIdx == iCount)
+		  {
+#if HF_tongji_
+
+			  if ((xP == 1 * WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+			  {
+				  if (getSlice()->isInterB())
+				  {
+					  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0 && pcMvFieldNeighbours[(iCount << 1) + 1].getHor() >= 0)
+						  left_count++;
+
+				  }
+				  else
+				  {
+					  if (pcMvFieldNeighbours[iCount << 1].getHor() >= 0)
+					  {
+						  left_count++;
+
+					  }
+				  }
+				  cout << "left_count   " << left_count << endl;
+			  }
+#endif
+			  return;
+		  }
+		  iCount++;
+	  }
+
+	  // early termination
+	  if (iCount == getSlice()->getMaxNumMergeCand())
+	  {
+		  return;
+	  }
+	  // above
+	//  UInt uiAbovePartIdx = 0;
+	 // const TComDataCU *pcCUAbove = getPUAbove(uiAbovePartIdx, uiPartIdxRT);
+#if HF_20170512_changedtheorderinmerge
+	  Bool isAvailableB1;
+	  if (yP == WH&&xP >= WH)
+		  isAvailableB1 = false;
+	  else
+		  isAvailableB1 = pcCUAbove &&
+		  pcCUAbove->isDiffMER(xP + nPSW - 1, yP - 1, xP, yP) &&
+		  !(uiPUIdx == 1 && (cCurPS == SIZE_2NxN || cCurPS == SIZE_2NxnU || cCurPS == SIZE_2NxnD)) &&
+		  pcCUAbove->isInter(uiAbovePartIdx);
+#else
+	   isAvailableB1 = pcCUAbove &&
+		  pcCUAbove->isDiffMER(xP + nPSW - 1, yP - 1, xP, yP) &&
+		  !(uiPUIdx == 1 && (cCurPS == SIZE_2NxN || cCurPS == SIZE_2NxnU || cCurPS == SIZE_2NxnD)) &&
+		  pcCUAbove->isInter(uiAbovePartIdx);
+#endif
+
+	  if (isAvailableB1 && (!isAvailableA1 || !pcCULeft->hasEqualMotion(uiLeftPartIdx, pcCUAbove, uiAbovePartIdx)))
+	  {
+		  abCandIsInter[iCount] = true;
+		  // get Inter Dir
+		  puhInterDirNeighbours[iCount] = pcCUAbove->getInterDir(uiAbovePartIdx);
+		  // get Mv from Left
+		  TComDataCU::getMvField(pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount << 1]);
+		  if (getSlice()->isInterB())
+		  {
+			  TComDataCU::getMvField(pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount << 1) + 1]);
+		  }
+		  if (mrgCandIdx == iCount)
+		  {
+
+#if HF_tongji_
+
+			  if ((yP == WH || yP == 2 * WH) && xP < WH)
+			  {
+				  above_count++;
+				  cout << "above_count  " << above_count << "  ";
+			  }
+#endif
+			  return;
+		  }
+		  iCount++;
+	  }
+	  // early termination
+	  if (iCount == getSlice()->getMaxNumMergeCand())
+	  {
+		  return;
+	  }
+
+
+  }
+//  UInt uiAbovePartIdx = 0;
+//  const TComDataCU *pcCUAbove = getPUAbove( uiAbovePartIdx, uiPartIdxRT );
+//  Bool isAvailableB1 = pcCUAbove &&
+//	  pcCUAbove->isDiffMER(xP+nPSW-1, yP-1, xP, yP) &&
+//	  !( uiPUIdx == 1 && (cCurPS == SIZE_2NxN || cCurPS == SIZE_2NxnU || cCurPS == SIZE_2NxnD) ) &&
+//	  pcCUAbove->isInter( uiAbovePartIdx );
+//
+//
+//  if ( isAvailableB1  )
+//  {
+//	  abCandIsInter[iCount] = true;
+//	  // get Inter Dir
+//	  puhInterDirNeighbours[iCount] = pcCUAbove->getInterDir( uiAbovePartIdx );
+//	  // get Mv from Left
+//	  TComDataCU::getMvField( pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount<<1] );
+//	  if ( getSlice()->isInterB() )
+//	  {
+//		  TComDataCU::getMvField( pcCUAbove, uiAbovePartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount<<1)+1] );
+//	  }
+//	  if ( mrgCandIdx == iCount )
+//	  {
+//
+//#if HF_tongji
+//
+//		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+//		  {
+//			  above_count++;
+//			  cout << "above_count   " << above_count << endl;
+//		  }
+//#endif
+//		  return;
+//	  }
+//	  iCount ++;
+//  }
+//  // early termination
+//  if (iCount == getSlice()->getMaxNumMergeCand())
+//  {
+//	  return;
+//  }
+//  //left
+//  UInt uiLeftPartIdx = 0;
+//  const TComDataCU *pcCULeft = getPULeft(uiLeftPartIdx, uiPartIdxLB);
+//
+//  Bool isAvailableA1 = pcCULeft &&
+//	  pcCULeft->isDiffMER(xP -1, yP+nPSH-1, xP, yP) &&
+//	  !( uiPUIdx == 1 && (cCurPS == SIZE_Nx2N || cCurPS == SIZE_nLx2N || cCurPS == SIZE_nRx2N) ) &&
+//	  pcCULeft->isInter( uiLeftPartIdx ) ;
+//
+//  if (isAvailableA1 && (!isAvailableB1 || !pcCUAbove->hasEqualMotion(uiAbovePartIdx, pcCULeft, uiLeftPartIdx)))
+//  {
+//	  abCandIsInter[iCount] = true;
+//	  // get Inter Dir
+//	  puhInterDirNeighbours[iCount] = pcCULeft->getInterDir( uiLeftPartIdx );
+//	  // get Mv from Left
+//	  TComDataCU::getMvField( pcCULeft, uiLeftPartIdx, REF_PIC_LIST_0, pcMvFieldNeighbours[iCount<<1] );
+//	  if ( getSlice()->isInterB() )
+//	  {
+//		  TComDataCU::getMvField( pcCULeft, uiLeftPartIdx, REF_PIC_LIST_1, pcMvFieldNeighbours[(iCount<<1)+1] );
+//	  }
+//	  if ( mrgCandIdx == iCount )
+//	  {
+//#if HF_tongji
+//
+//		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
+//		  {
+//			  left_count++;
+//			  cout << "left_count   " << left_count << endl;
+//		  }
+//#endif
+//		  return;
+//	  }
+//	  iCount ++;
+//  }
+//
+//  // early termination
+//  if (iCount == getSlice()->getMaxNumMergeCand())
+//  {
+//	  return;
+//  }
 #else
   //left
   UInt uiLeftPartIdx = 0;
@@ -2388,7 +2583,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
     }
     if ( mrgCandIdx == iCount )
     {
-#if HF_tongji
+#if HF_tongji_
 
 		if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		{
@@ -2437,7 +2632,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
     }
     if ( mrgCandIdx == iCount )
     {
-#if HF_tongji
+#if HF_tongji_
 
 		if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		{
@@ -2487,7 +2682,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
       }
       if ( mrgCandIdx == iCount )
       {
-#if HF_tongji
+#if HF_tongji_
 
 		  if ((xP == WH || xP == 2 * WH || xP == 3 * WH) && yP<2 * WH&&yP>WH)
 		  {
